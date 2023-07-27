@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -47,8 +48,10 @@ public class MeasurementController {
         try {
             service.createMeasurement(userDetails,request.getBody());
             return ResponseEntity.ok("Measurement added correctly");
-        } catch (ResourceNotValidException e) {
+        } catch (ResourceNotValidException | IOException e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
+
         }
         catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -10,13 +10,14 @@ import com.example.wearabledashboard.exception.ResourceNotValidException;
 import com.example.wearabledashboard.model.Doctor;
 import com.example.wearabledashboard.model.Measurement;
 import com.example.wearabledashboard.model.Patient;
+import com.example.wearabledashboard.util.filesystem.FileSystemMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,9 @@ public class MeasurementService {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    @Autowired
+    private FileSystemMeasurementService fileSystemService;
 
     public List<MeasurementDTO> getMeasurements(PatientDTO patient) {
 
@@ -58,13 +62,24 @@ public class MeasurementService {
                         )
                         );
 
-        //todo al posto dei path trovare i file effettivi e convertirli in stringhe
+        measurements.forEach(
+                it ->
+                {
+                    try {
+                        it.setCsv( fileSystemService.readFile(it));
+                    } catch (IOException e) {
+                        throw new ResourceNotFoundException("","","");
+                    }
+                }
+        );
+
+
 
         return measurements;
     }
 
 
-    public MeasurementDTO createMeasurement(UserDetails doctor, MeasurementDTO measurement) {
+    public MeasurementDTO createMeasurement(UserDetails doctor, MeasurementDTO measurement) throws IOException {
 
         //Find the doctor in the db
         Optional<Doctor> repositoryDoctor = doctorRepository.findBySsn(doctor.getUsername());
@@ -91,20 +106,22 @@ public class MeasurementService {
 
 
 
-        Optional<Patient> repositoryPatient = repositoryDoctor.get().getPatients().stream().filter( it -> it.getSsn().equals( measurement.ssn())).findFirst();
+        Optional<Patient> repositoryPatient = repositoryDoctor.get().getPatients().stream().filter( it -> it.getSsn().equals( measurement.getSsn())).findFirst();
 
         if(repositoryPatient.isEmpty())
-            throw new ResourceNotFoundException(PATIENT,SSN,measurement.ssn());
+            throw new ResourceNotFoundException(PATIENT,SSN,measurement.getSsn());
 
         Patient patient = repositoryPatient.get();
         patient.setDoctor(repositoryDoctor.get());
 
 
         Measurement measurementToAdd = new Measurement();
-        measurementToAdd.setDevice(measurement.device());
-        measurementToAdd.setCsvPath("C://placeholder/path");
+        measurementToAdd.setDevice(measurement.getDevice());
+
+
+        measurementToAdd.setCsvPath(fileSystemService.createFile(measurement));
         measurementToAdd.setPatient(patient);
-        measurementToAdd.setMeasurementTimestamp(measurement.measurementTimestamp());
+        measurementToAdd.setMeasurementTimestamp(measurement.getMeasurementTimestamp());
 
 
         patient.getMeasurements().add(measurementToAdd);
