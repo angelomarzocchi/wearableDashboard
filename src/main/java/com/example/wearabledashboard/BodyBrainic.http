@@ -1,0 +1,30 @@
+
+POST http://localhost:8080/bodybrainic/api/auth/authenticate
+Content-Type: application/json
+
+{
+  "ssn": "MRZNGL98S25F839T",
+  "password":  "mypassword"
+}
+
+###
+GET http://localhost:8080/bodybrainic/api/doc/patients
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNUlpOR0w5OFMyNUY4MzlUIiwiaWF0IjoxNjkwNDc2NzkxLCJleHAiOjE2OTA1NjMxOTF9.pM24Cyy61KZXLK_66DG2rzV3WJXyZjzlLnfTOSsCdtQ
+
+###
+
+GET http://localhost:8080/bodybrainic/api/measurements
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNUlpOR0w5OFMyNUY4MzlUIiwiaWF0IjoxNjkyNjExNjc3LCJleHAiOjE2OTI2OTgwNzd9.NdwfPv50s21obbBHuh58JwfwUKw7viarHDdpRoyOpc8
+Content-Type: application/json
+
+{
+  "ssn": "LGCRL111257"
+}
+
+
+
+
+
+

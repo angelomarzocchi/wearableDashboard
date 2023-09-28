@@ -35,9 +35,10 @@ public class FileSystemMeasurementWindowsImpl implements FileSystemMeasurementSe
         byte[] measurementContent = measurementDTO.getCsv().getBytes();
 
         String measurementRelativePath = String.format(
-                "%s\\%s%s",
+                "%s\\%s%s%s",
                 measurementDTO.getSsn(),
                 measurementDTO.getMeasurementTimestamp().toInstant().toString().replace(":",""),
+                measurementDTO.getDevice().toString().toUpperCase(),
                 CSV_EXT);
         File file = new File(directory,measurementRelativePath);
 
@@ -65,9 +66,10 @@ public class FileSystemMeasurementWindowsImpl implements FileSystemMeasurementSe
             throw new ResourceNotValidException("FileSystemMeasurementWindowsImpl","measurementBasePath","no measurements saved yet");
 
         String measurementRelativePath = String.format(
-                "%s\\%s%s",
+                "%s\\%s%s%s",
                 measurementDTO.getSsn(),
                 measurementDTO.getMeasurementTimestamp().toInstant().toString().replace(":",""),
+                measurementDTO.getDevice().toString().toUpperCase(),
                 CSV_EXT);
 
         File file = new File(directory,measurementRelativePath);

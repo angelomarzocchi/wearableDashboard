@@ -26,7 +26,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         var doctor  = new Doctor();
-        //todo check request before trying create doctor
+
 
         if(repository.findBySsn(request.getSsn()).isPresent()) {
             throw new UserAlreadyRegisteredException("Doctor","ssn",request.getSsn());
